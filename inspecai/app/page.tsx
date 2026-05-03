@@ -486,9 +486,11 @@ export default function Home() {
   const [glow, setGlow] = useState({ x: 0, y: 0, visible: false });
   const [savedBenchmarks, setSavedBenchmarks] = useState<SavedBenchmarkSummary[]>([]);
   const [selectedBenchmark, setSelectedBenchmark] = useState<SavedBenchmarkDetail | null>(null);
+  const [loadingBenchmarkId, setLoadingBenchmarkId] = useState<number | null>(null);
   const [benchmarkSaveStatus, setBenchmarkSaveStatus] = useState("");
   const [savedSingleImages, setSavedSingleImages] = useState<SavedSingleImageSummary[]>([]);
   const [selectedSingleImage, setSelectedSingleImage] = useState<SavedSingleImageDetail | null>(null);
+  const [loadingSingleImageId, setLoadingSingleImageId] = useState<number | null>(null);
   const [singleSaveStatus, setSingleSaveStatus] = useState("");
 
   useEffect(() => {
@@ -595,6 +597,8 @@ export default function Home() {
   }
 
   async function loadBenchmarkDetail(id: number) {
+    setLoadingBenchmarkId(id);
+    setBenchmarkSaveStatus("");
     try {
       const response = await fetch(`${API_BASE}/api/benchmarks/${id}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -602,6 +606,8 @@ export default function Home() {
     } catch {
       setSelectedBenchmark(null);
       setBenchmarkSaveStatus("Could not load saved benchmark.");
+    } finally {
+      setLoadingBenchmarkId(null);
     }
   }
 
@@ -617,6 +623,8 @@ export default function Home() {
   }
 
   async function loadSingleImageDetail(id: number) {
+    setLoadingSingleImageId(id);
+    setSingleSaveStatus("");
     try {
       const response = await fetch(`${API_BASE}/api/single-images/${id}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -624,6 +632,8 @@ export default function Home() {
     } catch {
       setSelectedSingleImage(null);
       setSingleSaveStatus("Could not load saved image.");
+    } finally {
+      setLoadingSingleImageId(null);
     }
   }
 
@@ -1246,6 +1256,7 @@ export default function Home() {
                   key={image.id}
                   className={classNames("single-history-card", selectedSingleImage?.id === image.id && "active")}
                   type="button"
+                  disabled={loadingSingleImageId !== null}
                   onClick={() => loadSingleImageDetail(image.id)}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1255,15 +1266,31 @@ export default function Home() {
                     <small>{fmtDateTime(image.created_at)}</small>
                   </span>
                   <span>
-                    <strong>{image.model_count}</strong>
-                    <small>models</small>
+                    {loadingSingleImageId === image.id ? (
+                      <>
+                        <strong className="single-loading-word">LOAD</strong>
+                        <small className="single-card-loader"><i className="mini-spinner" /> results</small>
+                      </>
+                    ) : (
+                      <>
+                        <strong>{image.model_count}</strong>
+                        <small>models</small>
+                      </>
+                    )}
                   </span>
                 </button>
               ))
             )}
           </div>
 
-          {selectedSingleImage && (
+          {loadingSingleImageId !== null && (
+            <div className="single-detail-loader">
+              <i className="mini-spinner" />
+              <span>LOADING SAVED IMAGE RESULTS</span>
+            </div>
+          )}
+
+          {loadingSingleImageId === null && selectedSingleImage && (
             <div className="saved-table-wrap">
               <div className="single-detail-head">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1340,6 +1367,7 @@ export default function Home() {
                   key={benchmark.id}
                   className={classNames("benchmark-history-card", selectedBenchmark?.id === benchmark.id && "active")}
                   type="button"
+                  disabled={loadingBenchmarkId !== null}
                   onClick={() => loadBenchmarkDetail(benchmark.id)}
                 >
                   <span>
@@ -1351,15 +1379,31 @@ export default function Home() {
                     <small>{benchmark.best_model || "No winner"}</small>
                   </span>
                   <span>
-                    <strong>{benchmark.total_images}</strong>
-                    <small>images</small>
+                    {loadingBenchmarkId === benchmark.id ? (
+                      <>
+                        <strong className="single-loading-word">LOAD</strong>
+                        <small className="single-card-loader"><i className="mini-spinner" /> table</small>
+                      </>
+                    ) : (
+                      <>
+                        <strong>{benchmark.total_images}</strong>
+                        <small>images</small>
+                      </>
+                    )}
                   </span>
                 </button>
               ))
             )}
           </div>
 
-          {selectedBenchmark && (
+          {loadingBenchmarkId !== null && (
+            <div className="single-detail-loader">
+              <i className="mini-spinner" />
+              <span>LOADING SAVED BENCHMARK TABLE</span>
+            </div>
+          )}
+
+          {loadingBenchmarkId === null && selectedBenchmark && (
             <div className="saved-table-wrap">
               <div className="saved-table-meta">
                 <span>{selectedBenchmark.dataset_name}</span>

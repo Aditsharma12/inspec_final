@@ -1074,6 +1074,11 @@ body {
     background: var(--card);
 }
 
+.benchmark-history-card:disabled {
+    cursor: wait;
+    opacity: 0.78;
+}
+
 .benchmark-history-card span {
     min-width: 0;
     display: flex;
@@ -1130,6 +1135,11 @@ body {
     background: var(--card);
 }
 
+.single-history-card:disabled {
+    cursor: wait;
+    opacity: 0.78;
+}
+
 .single-history-card img {
     width: 54px;
     height: 54px;
@@ -1164,6 +1174,35 @@ body {
     font-size: 0.62rem;
     letter-spacing: 0.06em;
     color: var(--ink-3);
+}
+
+.single-card-loader {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.single-card-loader .mini-spinner {
+    flex: 0 0 auto;
+}
+
+.single-loading-word {
+    color: var(--accent);
+}
+
+.single-detail-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 140px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card-tint);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
 }
 
 .single-detail-head {
