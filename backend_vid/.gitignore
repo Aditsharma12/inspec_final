@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Uploads (runtime directory)
+uploads/
+
+# Mac artifacts
+.DS_Store
+._*
+
+# Model weights (large files — use Git LFS or store on HuggingFace Hub)
+weight/*.pth
+weight/*.pkl
